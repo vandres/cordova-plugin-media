@@ -33,6 +33,17 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
 
 -(void) pluginInitialize
 {
+    NSError* error = nil;
+    NSLog(@"Setting the Audio Category");
+
+    // this setting tries to overwrite the global audio session stored
+    if (![[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+        withOptions:AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers | AVAudioSessionCategoryOptionDuckOthers
+        error:&error]) {
+
+        NSLog(@"SetGlobalAudioCategory setting category failed with %@", [error localizedFailureReason]);
+    }
+
     NSDictionary* settings = self.commandDelegate.settings;
     keepAvAudioSessionAlwaysActive = [[settings objectForKey:[@"KeepAVAudioSessionAlwaysActive" lowercaseString]] boolValue];
     if (keepAvAudioSessionAlwaysActive) {
